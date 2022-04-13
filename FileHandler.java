@@ -30,11 +30,11 @@ public class FileHandler {
             classifier += c;
             }
             else {
-                classifiers.add(classifier);
+                classifiers.add(classifier.strip());
                 classifier = "";
             }
         }
-        classifiers.add(classifier);
+        classifiers.add(classifier.strip());
         
         return classifiers;
     }
