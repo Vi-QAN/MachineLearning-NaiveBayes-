@@ -1,12 +1,9 @@
 import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
 
 public class Entity {
     // contain the number of records shared among Entity objects
     private static int recordCount = 0;
 
-    
 
     // Entity detail stored in form of key value pair (columnName : value)
     public HashMap<String,String> detail = new HashMap<String,String>();

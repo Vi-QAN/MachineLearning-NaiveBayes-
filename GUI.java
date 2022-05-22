@@ -35,46 +35,51 @@ public class GUI extends JFrame {
         mainPanel.add(new JScrollPane(displayPanel));
 
         Dimension linePanelD = new Dimension((int)displayPanelD.getWidth(),30);
+
         //add radio buttons
-        Classifier.values.forEach((column,values) -> {
-            JPanel linePanel = new JPanel();
-            linePanel.setLayout(new FlowLayout(FlowLayout.CENTER,0,0));
-            linePanel.setPreferredSize(linePanelD);
-            linePanel.setName(column);
-            // linePanel.addMouseListener(new MouseListener(){
-            //     @Override
-            //     public void
-            // });
+        trainer.getClassifierValues().forEach((column,values) -> {
+            if (!column.startsWith(trainer.getPredictClassifer())){
 
-            JLabel colLabel = new JLabel(column);
-            colLabel.setPreferredSize(new Dimension(300,(int)linePanelD.getHeight()));
-            colLabel.setName(column);
-            linePanel.add(colLabel);
+                JPanel linePanel = new JPanel();
+                linePanel.setLayout(new FlowLayout(FlowLayout.CENTER,0,0));
+                linePanel.setPreferredSize(linePanelD);
+                linePanel.setName(column);
+                // linePanel.addMouseListener(new MouseListener(){
+                //     @Override
+                //     public void
+                // });
 
-            ButtonGroup group = new ButtonGroup();
-            values.forEach((value) -> {
-                JRadioButton radioButton = new JRadioButton(value);
-                radioButton.setPreferredSize(new Dimension(200,(int)linePanelD.getHeight()));
-                radioButton.setName(value);
-                radioButton.setSelected(true);
-                
-                radioButton.addActionListener(new ActionListener(){
-                    @Override
-                    public void actionPerformed(ActionEvent e){
+                JLabel colLabel = new JLabel(column);
+                colLabel.setPreferredSize(new Dimension(300,(int)linePanelD.getHeight()));
+                colLabel.setName(column);
+                linePanel.add(colLabel);
+
+                ButtonGroup group = new ButtonGroup();
+                values.forEach((value) -> {
+                    JRadioButton radioButton = new JRadioButton(value);
+                    radioButton.setPreferredSize(new Dimension(200,(int)linePanelD.getHeight()));
+                    radioButton.setName(value);
+                    radioButton.setSelected(true);
+                    
+                    radioButton.addActionListener(new ActionListener(){
+                        @Override
+                        public void actionPerformed(ActionEvent e){
+                            selections.put(linePanel.getName(),radioButton.getText());
+                        }
+                    });
+                    group.add(radioButton);
+                    linePanel.add(radioButton);
+                });
+                for (Enumeration<AbstractButton> btns = group.getElements();btns.hasMoreElements();){
+                    AbstractButton radioButton = btns.nextElement();
+                    if (radioButton.isSelected()){
                         selections.put(linePanel.getName(),radioButton.getText());
                     }
-                });
-                group.add(radioButton);
-                linePanel.add(radioButton);
-            });
-            for (Enumeration<AbstractButton> btns = group.getElements();btns.hasMoreElements();){
-                AbstractButton radioButton = btns.nextElement();
-                if (radioButton.isSelected()){
-                    selections.put(linePanel.getName(),radioButton.getText());
                 }
-            }
+            
                 
-            displayPanel.add(linePanel);
+                displayPanel.add(linePanel);
+            }
         });
 
         JPanel buttonPanel = new JPanel();
@@ -88,8 +93,8 @@ public class GUI extends JFrame {
         addButton.addActionListener(new ActionListener(){
             @Override 
             public void actionPerformed(ActionEvent e){
-                Student student = new Student(selections);
-                Student.students.add(student);
+                Entity entity = new Entity(selections);
+                trainer.addEntity(entity);
             }
         });
         buttonPanel.add(addButton);
@@ -99,17 +104,16 @@ public class GUI extends JFrame {
         predictButton.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){
-                Table table = new Table();
                 List<String> cols = convertSelections();
-                String target = Classifier.list.get(Classifier.list.size()-1);
+                String target = trainer.getClassifierList().get(trainer.getClassifierList().size()-1);
 
                 cols.forEach((str) -> {
                     System.out.println(str);
                 });
 
                 // find the value of target column
-                String targetValue = table.findTargetCol(cols, target);
-                System.out.println(targetValue);
+                int targetValue = Table.findTargetCol(cols, target);
+                System.out.println(cols.get(targetValue));
             }
         });
         buttonPanel.add(predictButton);

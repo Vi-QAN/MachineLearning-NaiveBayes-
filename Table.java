@@ -11,23 +11,36 @@ public class Table {
     
     // each entity will have column names and corresponding values
     // seperate entity attributes to columns 
+    // used to work with Classifier class
     public static List<String> seperateCols(String format,Classifier classifier){
         // init cols to store those values in form of name - value 
         List<String> cols = new ArrayList<String>();
 
         // get column name and possible values
-        HashMap<String,HashSet<String>> values = classifier.getClassifierVals();
+        HashMap<String,HashSet<String>> values = classifier.getAllClassifierVals();
         
         // iterate through column names
         values.entrySet().forEach((entry) -> {
-            // iterate through column values
-            entry.getValue().forEach((value) -> {
-                String columnName = "";
-                columnName = String.format(format, entry.getKey(), value);
-                cols.add(columnName);
-            });
+            List<String> newCols = seperateCol(format, entry.getKey(), entry.getValue());
+            cols.addAll(newCols);
         });
         return cols;
+    }
+
+    // method use to seperate a single classifier into many columns according to its available values
+    // used to work with Classifier class
+    public static List<String> seperateCol(String format, String classifier, HashSet<String> values){
+        // initialize new columns
+        List<String> newCols = new ArrayList<String>();
+
+        // iterate through column values
+        values.forEach((value) -> {
+            String columnName = "";
+            columnName = String.format(format, classifier, value);
+            newCols.add(columnName);
+        });
+
+        return newCols;
     }
 
     // initial format 'column - value : frequency' of summary tables
@@ -73,8 +86,7 @@ public class Table {
         HashMap<String,HashMap<String,Integer>> conditionalSummary = new HashMap<>();
 
         // get the column want to predict (always positioned at the end)
-        List<String> classifierList = classifier.getClassifiers();
-        String predictCol = classifierList.get(classifierList.size() - 1);
+        String predictCol = classifier.getPredictClassifier();
 
         // 
         List<String> predictConditions = new ArrayList<String>();
@@ -111,25 +123,31 @@ public class Table {
         return conditionalSummary;
     }
 
-
+    // separate attributes of an entity into columns
+    // used to work with Entity class
     public static List<String> entityToCol(Entity entity, String colFormat){
+        // initialize columns
         List<String> cols = new ArrayList<String>();
+
+        // iterate through entity attributes
         entity.detail.forEach((key,val) -> {
             String col = String.format(colFormat, key,val);
             cols.add(col);
         });
+        
         return cols;
     }
 
-    public String findTargetCol(List<String> cols, String colName){
-        String value = "";
+    // get index of target column in the list
+    public static int findTargetCol(List<String> cols, String colName){
+        int index = 0;
         for (int i = 0; i < cols.size();i++){
             String temp = cols.get(i);
             if (temp.startsWith(colName)){
-                value = temp;
+                index = i;
             }
         }
-        return value;
+        return index;
     } 
 
     public static void printConditionalSummary(HashMap<String,HashMap<String,Integer>> conditionalSummary){

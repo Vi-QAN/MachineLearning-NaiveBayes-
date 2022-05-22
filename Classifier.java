@@ -15,7 +15,15 @@ public class Classifier {
     // contructor
     public Classifier(List<String> rawData){
         setClassifiers(rawData);
+        setPredictClassifier();
     }
+
+    public Classifier(){
+        
+    }
+
+    // classifier used as target prediction
+    private String predictClassifier;
 
     // get classifiers in data set
     public void setClassifiers(List<String> data){
@@ -33,7 +41,15 @@ public class Classifier {
         }
     }
 
-    
+    // set classifier that need to be predicted (always at the end of classifier list)
+    public void setPredictClassifier(){
+        this.predictClassifier = this.list.get(list.size() - 1);
+    }
+
+    // get classifier that need to be predicted
+    public String getPredictClassifier(){
+        return this.predictClassifier;
+    }
 
     public List<String> seperateCols(String format, HashMap<String,String> selections){
         List<String> cols = new ArrayList<String>();
@@ -52,8 +68,14 @@ public class Classifier {
     }
 
     // get all available values of each classifier
-    public HashMap<String,HashSet<String>> getClassifierVals(){
+    public HashMap<String,HashSet<String>> getAllClassifierVals(){
         return this.values;
+    }
+
+    // get all available values of each classifier
+    public HashSet<String> getClassifierVals(String classifier){
+        HashSet<String> result = this.values.get(classifier);
+        return result;
     }
 
     // get list of classifier
