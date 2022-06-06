@@ -36,6 +36,8 @@ public class Trainer {
     public Trainer(String dataSet){
         setDataSet(dataSet);
         initTrainer();
+        train();
+        test();
     }
 
     // read in data set then get classifiers, and data in each row
@@ -100,7 +102,7 @@ public class Trainer {
             String prediction = "";
 
             // other attributes
-            List<String> other = new ArrayList<>();
+            List<String> others = new ArrayList<>();
 
             // iterate through attribute list
             for (int i = 0; i < attributes.size();i++){
@@ -109,15 +111,11 @@ public class Trainer {
                     prediction = attr;
                 }
                 else {
-                    other.add(attr);
+                    others.add(attr);
                 }
             }
 
-            HashMap<String,Double> result = this.calculator.predictionProb(other, predictClassifier);
-            
-
-            // generate prediction
-            String generetedPrediction = generatePrediction(result);
+            String generetedPrediction = predict(others,predictClassifier);
 
             // compare with reality
             if (generetedPrediction.equals(prediction)){
@@ -127,6 +125,16 @@ public class Trainer {
         }
         System.out.printf("Counter: %d testing: %d",counter,testingSize);
         this.accuracy = ((float)counter / testingSize);
+    }
+
+    public String predict(List<String> others, String predictClassifier){
+    
+        HashMap<String,Double> result = this.calculator.predictionProb(others, predictClassifier);
+        
+        // generate prediction
+        String generetedPrediction = generatePrediction(result);
+
+        return generetedPrediction;
     }
 
     // compare and give prediction
@@ -175,6 +183,7 @@ public class Trainer {
         int index = (int)(total_size * 0.7);
         return index;
     }
+    
     // method allows user to load in their favourite data set
     public void setDataSet(String dataSet){
         this.dataSet = dataSet;
